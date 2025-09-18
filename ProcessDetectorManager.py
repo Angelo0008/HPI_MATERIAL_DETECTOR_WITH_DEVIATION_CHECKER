@@ -149,7 +149,7 @@ def gettingPreviousData(modelCode):
     amperageDev = statistics.pstdev(previousData["AMPERAGE Middle (A)"].tail(200).values)
     closedPressureDev = statistics.pstdev(previousData["CLOSED PRESSURE Middle (kPa)"].tail(200).values)
     
-def calculatingDeviation():
+def calculatingDeviation(modelCode):
     global isDeviation
 
     currentData = df.tail(1)
@@ -160,27 +160,28 @@ def calculatingDeviation():
     amperageMiddleCurrentValue = currentData["AMPERAGE Middle (A)"].values[0]
     closedPressureMiddleCurrentValue = currentData["CLOSED PRESSURE Middle (kPa)"].values[0]
 
-    voltageDevUcl = voltageMiddlePrevAverage + 3 * voltageDev
-    voltageDevLcl = voltageMiddlePrevAverage - 3 * voltageDev
+    voltageDevUcl = voltageMiddlePrevAverage * 1.03
+    voltageDevLcl = voltageMiddlePrevAverage * 0.97
 
-    wattageDevUcl = wattageMiddlePrevAverage + 3 * wattageDev
-    wattageDevLcl = wattageMiddlePrevAverage - 3 * wattageDev
+    wattageDevUcl = wattageMiddlePrevAverage * 1.03
+    wattageDevLcl = wattageMiddlePrevAverage * 0.97
 
-    amperageDevUcl = amperageMiddlePrevAverage + 3 * amperageDev
-    amperageDevLcl = amperageMiddlePrevAverage - 3 * amperageDev
+    amperageDevUcl = amperageMiddlePrevAverage * 1.03
+    amperageDevLcl = amperageMiddlePrevAverage * 0.97
 
-    closedPressureDevUcl = closedPressureMiddlePrevAverage + 3 * closedPressureDev
-    closedPressureDevLcl = closedPressureMiddlePrevAverage - 3 * closedPressureDev
+    closedPressureDevUcl = closedPressureMiddlePrevAverage * 1.03
+    closedPressureDevLcl = closedPressureMiddlePrevAverage * 0.97
     
-    # plt.plot(dateTodayData["VOLTAGE Middle (V)"].values, marker='o', linestyle='-', color='blue', label="Data Points")
-    # plt.axhline(voltageMiddlePrevAverage, color='green', linestyle='--', label="Mean")
-    # plt.axhline(voltageDevUcl, color='red', linestyle='--', label="UCL (+3σ)")
-    # plt.axhline(voltageDevLcl, color='red', linestyle='--', label="LCL (-3σ)")
-    # plt.title("SPC Control Chart (X̄ Chart)")
-    # plt.xlabel("Sample Number")
-    # plt.ylabel("Measured Value")
-    # plt.legend()
-    # plt.show()
+    plt.plot(dateTodayData["VOLTAGE Middle (V)"].values, marker='o', linestyle='-', color='blue', label="Data Points")
+    plt.axhline(voltageMiddlePrevAverage, color='green', linestyle='--', label="Mean")
+    plt.axhline(voltageDevUcl, color='red', linestyle='--', label="UCL (3%)")
+    plt.axhline(voltageDevLcl, color='red', linestyle='--', label="LCL (-3%)")
+    if modelCode == "60CAT0213P":
+        plt.axhline(11.7, color='blue', linestyle='-', label="USL")
+    plt.title("VOLTAGE MIDDLE")
+    plt.ylabel("Measured Value")
+    plt.legend()
+    plt.show()
 
     if voltageMiddleCurrentValue > voltageDevUcl or voltageMiddleCurrentValue < voltageDevLcl:
         print(f"Voltage Deviation Detected {voltageDevUcl} > {voltageMiddleCurrentValue} < {voltageDevLcl}")
@@ -217,9 +218,9 @@ def calculatingDeviation():
 def RunDeviationDetection():
     readCompiledPiMachine()
     gettingPreviousData(df["MODEL CODE"].tail(1).values[0])
-    calculatingDeviation()
+    calculatingDeviation(df["MODEL CODE"].tail(1).values[0])
 
-RunDeviationDetection()
+# RunDeviationDetection()
     
 #%%
 
@@ -605,7 +606,11 @@ def startProgram():
             process6_org_file = process6_curr_file
 
         #Deviation
-        
+        if compiledPiFileCurrent != compiledPiFileOrig:
+            print("Inspection Machine Changes Detected")
+            RunDeviationDetection()
+
+            compiledPiFileOrig = compiledPiFileCurrent
 
         UpdateLoading()
         time.sleep(1)

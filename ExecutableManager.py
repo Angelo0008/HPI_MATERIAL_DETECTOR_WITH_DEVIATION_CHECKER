@@ -28,3 +28,5 @@ def stopProcess5():
     ProcessDetectorManager.stopProcess5Button()
 def stopProcess6():
     ProcessDetectorManager.stopProcess6Button()
+def stopDeviation():
+    ProcessDetectorManager.stopDeviationButton()

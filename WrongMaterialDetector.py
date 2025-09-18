@@ -414,7 +414,7 @@ def showGUI():
         root,
         text="STOP",
         font=("Arial", 12),
-        command=disable_deviation,
+        command=ExecutableManager.stopDeviation,
         width=15,
         height=1,
     )
