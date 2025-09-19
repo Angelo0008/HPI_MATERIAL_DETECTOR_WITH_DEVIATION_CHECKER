@@ -8,7 +8,10 @@ def run():
 
 def runProcessDetectionManager():
     ProcessDetectorManager.startProgram()
-    Deviation1CManager.run()
+def runDeviationCanDetect():
+    ProcessDetectorManager.RunDeviationDetection(True)
+def runDeviationCantDetect():
+    ProcessDetectorManager.RunDeviationDetection(False)
 
 def runButtonController():
     ProcessDetectorManager.buttonController()
