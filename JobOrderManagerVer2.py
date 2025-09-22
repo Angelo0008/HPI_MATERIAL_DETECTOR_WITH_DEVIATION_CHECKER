@@ -3,9 +3,13 @@ from Imports import *
 
 read_job_order = None
 job_order_materials = None
+jobOrderDate = None
+jobOrderTime = None
 
 def check_job_orders():
     global read_job_order
+    global jobOrderDate
+    global jobOrderTime
 
     pd.set_option('display.max_columns', None)
     pd.set_option('display.max_rows', None)
@@ -15,6 +19,8 @@ def check_job_orders():
     data_frames = data_frames.tail(1)
 
     read_job_order = data_frames["Job Order Number"].values[0].replace("\t", "").replace(" ", "")
+    jobOrderDate = data_frames["DATE"].values[0]
+    jobOrderTime = data_frames["TIME"].values[0]
 
 def find_materials():
     global job_order_materials

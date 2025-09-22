@@ -5,5 +5,8 @@ isDeviationDetected = False
 InsertToLog = None
 
 voltageFig = None
+wattageFig = None
+amperageFig = None
+closedPressureFig = None
 
 voltageTolerance = 5

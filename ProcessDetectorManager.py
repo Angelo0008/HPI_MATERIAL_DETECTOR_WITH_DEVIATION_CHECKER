@@ -32,7 +32,6 @@ def read_proc_1_csv():
     process_1_csv = pd.read_csv(
         rf"\\192.168.2.10\csv\csv\VT1\log000_1.csv", encoding="latin1"
     )
-
 def read_proc_2_csv():
     global process_2_csv
 
@@ -173,14 +172,14 @@ def calculatingDeviation(modelCode):
     voltageDevUcl = voltageMiddlePrevAverage * (1.00 + (varMan.voltageTolerance / 100))
     voltageDevLcl = voltageMiddlePrevAverage * (1.00 - (varMan.voltageTolerance / 100))
 
-    wattageDevUcl = wattageMiddlePrevAverage * 1.05
-    wattageDevLcl = wattageMiddlePrevAverage * 0.95
+    wattageDevUcl = wattageMiddlePrevAverage * (1.00 + (varMan.voltageTolerance / 100))
+    wattageDevLcl = wattageMiddlePrevAverage * (1.00 - (varMan.voltageTolerance / 100))
 
-    amperageDevUcl = amperageMiddlePrevAverage * 1.05
-    amperageDevLcl = amperageMiddlePrevAverage * 0.95
+    amperageDevUcl = amperageMiddlePrevAverage * (1.00 + (varMan.voltageTolerance / 100))
+    amperageDevLcl = amperageMiddlePrevAverage * (1.00 - (varMan.voltageTolerance / 100))
 
-    closedPressureDevUcl = closedPressureMiddlePrevAverage * 1.05
-    closedPressureDevLcl = closedPressureMiddlePrevAverage * 0.95
+    closedPressureDevUcl = closedPressureMiddlePrevAverage * (1.00 + (varMan.voltageTolerance / 100))
+    closedPressureDevLcl = closedPressureMiddlePrevAverage * (1.00 - (varMan.voltageTolerance / 100))
 
 def CheckingForDeviation():
     global isDeviation
@@ -217,8 +216,8 @@ def CheckingForDeviation():
         print(f"No Closed Pressure Deviation Detected {closedPressureDevUcl} > {closedPressureMiddleCurrentValue} < {closedPressureDevLcl}")
         print(f"Serial Number: {currentDataSerialNumber}")
 
-def createPlotFigure(modelCode):
-    varMan.voltageFig, ax = plt.subplots(figsize=(6,4))
+def createVoltagePlotFigure(modelCode):
+    varMan.voltageFig, ax = plt.subplots(figsize=(6,2.5))
 
     # Plot your data
     ax.plot(dateTodayData["VOLTAGE Middle (V)"].values, marker='o', linestyle='-', color='blue', label="Voltage Points")
@@ -247,13 +246,65 @@ def createPlotFigure(modelCode):
     # plt.legend()
     # plt.show()
 
+def createWattagePlotFigure(modelCode):
+    varMan.wattageFig, ax = plt.subplots(figsize=(6,2.5))
+
+    # Plot your data
+    ax.plot(dateTodayData["WATTAGE Middle (W)"].values, marker='o', linestyle='-', color='blue', label="Wattage Points")
+    ax.axhline(wattageMiddlePrevAverage, color='green', linestyle='--', label="Mean")
+    ax.axhline(wattageDevUcl, color='red', linestyle='--', label=f"UCL ({varMan.voltageTolerance}%)")
+    ax.axhline(wattageDevLcl, color='red', linestyle='--', label=f"LCL (-{varMan.voltageTolerance}%)")
+
+    if modelCode == "60CAT0213P":
+        ax.axhline(27.1, color='blue', linestyle='-', label="USL")
+
+    ax.set_title("WATTAGE MIDDLE")
+    ax.set_ylabel("Measured Value")
+    ax.legend()
+
+def createAmperagePlotFigure(modelCode):
+    varMan.amperageFig, ax = plt.subplots(figsize=(6,2.5))
+
+    # Plot your data
+    ax.plot(dateTodayData["AMPERAGE Middle (A)"].values, marker='o', linestyle='-', color='blue', label="Amperage Points")
+    ax.axhline(amperageMiddlePrevAverage, color='green', linestyle='--', label="Mean")
+    ax.axhline(amperageDevUcl, color='red', linestyle='--', label=f"UCL ({varMan.voltageTolerance}%)")
+    ax.axhline(amperageDevLcl, color='red', linestyle='--', label=f"LCL (-{varMan.voltageTolerance}%)")
+
+    if modelCode == "60CAT0213P":
+        ax.axhline(3.7, color='blue', linestyle='-', label="USL")
+
+    ax.set_title("AMPERAGE MIDDLE")
+    ax.set_ylabel("Measured Value")
+    ax.legend()
+
+def createClosedPressurePlotFigure(modelCode):
+    varMan.closedPressureFig, ax = plt.subplots(figsize=(6,2.5))
+
+    # Plot your data
+    ax.plot(dateTodayData["CLOSED PRESSURE Middle (kPa)"].values, marker='o', linestyle='-', color='blue', label="Closed Pressure Points")
+    ax.axhline(closedPressureMiddlePrevAverage, color='green', linestyle='--', label="Mean")
+    ax.axhline(closedPressureDevUcl, color='red', linestyle='--', label=f"UCL ({varMan.voltageTolerance}%)")
+    ax.axhline(closedPressureDevLcl, color='red', linestyle='--', label=f"LCL (-{varMan.voltageTolerance}%)")
+
+    if modelCode == "60CAT0213P":
+        ax.axhline(27.8, color='blue', linestyle='-', label="USL")
+        ax.axhline(33.2, color='blue', linestyle='-', label="LSL")
+
+    ax.set_title("CLOSED PRESSURE MIDDLE")
+    ax.set_ylabel("Measured Value")
+    ax.legend()
+
 def RunDeviationDetection(canDetect):
     readCompiledPiMachine()
     gettingPreviousData(df["MODEL CODE"].tail(1).values[0])
     calculatingDeviation(df["MODEL CODE"].tail(1).values[0])
     if canDetect:
         CheckingForDeviation()
-    createPlotFigure(df["MODEL CODE"].tail(1).values[0])
+    createVoltagePlotFigure(df["MODEL CODE"].tail(1).values[0])
+    createWattagePlotFigure(df["MODEL CODE"].tail(1).values[0])
+    createAmperagePlotFigure(df["MODEL CODE"].tail(1).values[0])
+    createClosedPressurePlotFigure(df["MODEL CODE"].tail(1).values[0])
     WrongMaterialDetector.createVoltageFigure()
 
 # RunDeviationDetection()
@@ -374,20 +425,23 @@ def startProgram():
     global isProcess5MaterialWrong
     global isProcess6MaterialWrong
 
-    process1_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT1\log000_1.csv")
-    process2_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT2\log000_2.csv")
-    process3_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT3\log000_3.csv")
-    process4_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT4\log000_4.csv")
-    process5_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT5\log000_5.csv")
-    process6_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT6\log000_6.csv")
+    try:
+        process1_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT1\log000_1.csv")
+        process2_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT2\log000_2.csv")
+        process3_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT3\log000_3.csv")
+        process4_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT4\log000_4.csv")
+        process5_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT5\log000_5.csv")
+        process6_org_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT6\log000_6.csv")
 
-    compiledPiFileOrig =os.path.getmtime(r"\\192.168.2.19\ai_team\AI Program\Outputs\CompiledPiMachine\CompiledPIMachine.csv")
+        compiledPiFileOrig = os.path.getmtime(r"\\192.168.2.19\ai_team\AI Program\Outputs\CompiledPiMachine\CompiledPIMachine.csv")
+    except:
+        WrongMaterialDetector.ShowErrorBox()
 
     refreshJobOrder()
     
     while True:
         while True:
-            try:
+            try: 
                 process1_curr_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT1\log000_1.csv")
                 process2_curr_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT2\log000_2.csv")
                 process3_curr_file = os.path.getmtime(r"\\192.168.2.10\csv\csv\VT3\log000_3.csv")
@@ -405,6 +459,7 @@ def startProgram():
         #Process 1
         if process1_curr_file != process1_org_file:
             print("Process 1 Changes Detected")
+            refreshJobOrder()
 
             while True:
                 try:
@@ -438,6 +493,7 @@ def startProgram():
         #Process 2
         if process2_curr_file != process2_org_file:
             print("Process 2 Changes Detected")
+            refreshJobOrder()
 
             while True:
                 try:
@@ -479,6 +535,7 @@ def startProgram():
         #Process 3
         if process3_curr_file != process3_org_file:
             print("Process 3 Changes Detected")
+            refreshJobOrder()
 
             while True:
                 try:
@@ -536,6 +593,7 @@ def startProgram():
         #Process 4
         if process4_curr_file != process4_org_file:
             print("Process 4 Changes Detected")
+            refreshJobOrder()
 
             while True:
                 try:
@@ -589,6 +647,7 @@ def startProgram():
         #Process 5
         if process5_curr_file != process5_org_file:
             print("Process 5 Changes Detected")
+            refreshJobOrder()
 
             while True:
                 try:
@@ -617,6 +676,7 @@ def startProgram():
         #Process 6
         if process6_curr_file != process6_org_file:
             print("Process 6 Changes Detected")
+            refreshJobOrder()
 
             while True:
                 try:

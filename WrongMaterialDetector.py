@@ -1,6 +1,6 @@
 # %%
 from Imports import *
-import JobOrderManager as JOManager
+import JobOrderManagerVer2 as JOManager
 import serial
 # import Deviation1CManager
 import ExecutableManager
@@ -219,12 +219,18 @@ def ClearLogWindow():
 
 def open_new_window():
     global jobOrderMaterialsText
+    global new_win
+
+    try:
+        new_win.destroy()
+    except:
+        pass
 
     materials = ""
 
     new_win = tk.Toplevel(root)  # Create a new top-level window
-    new_win.title("JOB ORDER MATERIALS")
-    new_win.geometry("300x400")
+    new_win.title(f"JO Num. {JOManager.read_job_order} JO Date: {JOManager.jobOrderDate} JO Time: {JOManager.jobOrderTime}")
+    new_win.geometry("550x400")
 
     frame = tk.Frame(new_win)
     frame.pack(fill="both", expand=True)
@@ -239,6 +245,8 @@ def open_new_window():
 
     # Connect scrollbar to text widget
     scrollbar.config(command=text_widget.yview)
+
+    ExecutableManager.refreshJobOrder()
 
     for a in JOManager.job_order_materials:
         materials += f"{a}\n"
@@ -265,9 +273,17 @@ def createVoltageFigure():
     canvas.draw()
     canvas.get_tk_widget().grid(row=5, column=0, ipadx=5)
 
-    canvas2 = FigureCanvasTkAgg(varMan.voltageFig, master=frame2)
+    canvas2 = FigureCanvasTkAgg(varMan.wattageFig, master=frame2)
     canvas2.draw()
     canvas2.get_tk_widget().grid(row=5, column=1, ipadx=5)
+
+    canvas3 = FigureCanvasTkAgg(varMan.amperageFig, master=frame2)
+    canvas3.draw()
+    canvas3.get_tk_widget().grid(row=6, column=0, ipadx=5)
+
+    canvas4 = FigureCanvasTkAgg(varMan.closedPressureFig, master=frame2)
+    canvas4.draw()
+    canvas4.get_tk_widget().grid(row=6, column=1, ipadx=5)
 
 def addVoltageTolerance():
     varMan.voltageTolerance += 1
@@ -283,6 +299,10 @@ def subtractVoltageTolerance():
 
     thread = threading.Thread(target=ExecutableManager.runDeviationCantDetect) # carl
     thread.start()
+
+def ShowErrorBox():
+    showerror(title='Error Status', message='Unable To Read Csv Files Press Ok To Exit')
+    stop_prog()
 
 # %%
 from ctypes import windll

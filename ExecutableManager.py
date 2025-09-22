@@ -33,3 +33,6 @@ def stopProcess6():
     ProcessDetectorManager.stopProcess6Button()
 def stopDeviation():
     ProcessDetectorManager.stopDeviationButton()
+
+def refreshJobOrder():
+    ProcessDetectorManager.refreshJobOrder()
