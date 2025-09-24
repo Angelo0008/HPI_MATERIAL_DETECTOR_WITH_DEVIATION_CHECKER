@@ -5,6 +5,7 @@ import WrongMaterialDetector
 import Deviation1CManager
 import VariableManager as varMan
 import DateAndTimeManager
+import CsvWriter
 
 process_1_csv = None
 process_2_csv = None
@@ -738,6 +739,15 @@ def CheckMaterial(process, material, code):
             WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 1 Incorrect {material} : {code}")
             isProcess1MaterialWrong = True
             print(f"Process 1 Incorrect {material}")
+
+        csvData = {
+            "DATE": temp_df_vt_1[f"DATE"].values[0],
+            "PROCESS_S_N": temp_df_vt_1[f"Process 1 S/N"].values[0],
+            "JOB_ORDER_NUMBER": [JOManager.read_job_order]
+        }
+        csvData = pd.DataFrame(csvData)
+
+        CsvWriter.WriteCsv(csvData)
 
     if process == "2":
         for a in JOManager.job_order_materials:
