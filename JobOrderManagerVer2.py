@@ -18,7 +18,7 @@ def check_job_orders():
 
     data_frames = data_frames.tail(1)
 
-    read_job_order = data_frames["Job Order Number"].values[0].replace("\t", "").replace(" ", "")
+    read_job_order = data_frames["Job Order Number"].values[0].replace("\t", "").replace(" ", "").replace("-", "")
     jobOrderDate = data_frames["DATE"].values[0]
     jobOrderTime = data_frames["TIME"].values[0]
 

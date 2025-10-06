@@ -1,6 +1,8 @@
+#%%
 from Imports import *
 
 dateToday = ""
+dateTodayDashFormat = ""
 timeNow = ""
 monthNowText = ""
 
@@ -11,6 +13,7 @@ dateToReadDashFormat = "2024-11-11"
 
 def GetDateToday():
     global dateToday
+    global dateTodayDashFormat
     global monthNowText
     global monthNow
     global yearNow
@@ -19,7 +22,11 @@ def GetDateToday():
     monthNowText = dateToday.strftime("%B")
     monthNow = int(dateToday.month)
     yearNow = int(dateToday.year)
+    dateTodayDashFormat = dateToday.strftime('%Y-%m-%d')
     dateToday = dateToday.strftime('%Y/%m/%d')
+
+GetDateToday()
+#%%
 
 def GetTimeNow():
     global timeNow

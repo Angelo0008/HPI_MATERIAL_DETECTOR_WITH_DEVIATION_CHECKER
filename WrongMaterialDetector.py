@@ -151,7 +151,7 @@ def arduinoConnection():
     global ser
     global comPort
 
-    comPort = 1
+    comPort = 2
     while True:
         try:
             ser = serial.Serial(f'COM{comPort}', 9600)
@@ -586,6 +586,8 @@ def showGUI():
 
 
     #  !------------------------------------THREADS SECTION------------------------------------!
+    ExecutableManager.runDeviationCantDetect()
+
     processDetector = threading.Thread(target=ExecutableManager.runProcessDetectionManager) # carl
     processDetector.start()   # 
 
@@ -595,7 +597,6 @@ def showGUI():
     buzzerController = threading.Thread(target=ExecutableManager.runBuzzerController) # carl
     buzzerController.start()   # 
 
-    ExecutableManager.runDeviationCantDetect()
 
     #  !------------------------------------THREADS SECTION------------------------------------!
 
