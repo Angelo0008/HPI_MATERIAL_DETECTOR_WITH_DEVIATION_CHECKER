@@ -25,6 +25,7 @@ def check_job_orders():
 def find_materials():
     global job_order_materials
     global read_job_order
+    global jobOrderDf
 
     current_year = datetime.datetime.now().year
 
@@ -39,6 +40,7 @@ def find_materials():
     if os.path.exists(file_path_current_with_dollar):
         try:
             job_order_materials = pd.read_excel(file_path_current_with_dollar)
+            jobOrderDf = pd.read_excel(file_path_current_with_dollar)
             if "Material" in job_order_materials.columns:
                 job_order_materials = job_order_materials["Material"]
             else:
@@ -51,6 +53,7 @@ def find_materials():
         if os.path.exists(file_path_current_without_dollar):
             try:
                 job_order_materials = pd.read_excel(file_path_current_without_dollar)
+                jobOrderDf = pd.read_excel(file_path_current_without_dollar)
                 if "Material" in job_order_materials.columns:
                     job_order_materials = job_order_materials["Material"]
                 else:
@@ -68,6 +71,7 @@ def find_materials():
             if os.path.exists(file_path_prev_with_dollar):
                 try:
                     job_order_materials = pd.read_excel(file_path_prev_with_dollar)
+                    jobOrderDf = pd.read_excel(file_path_prev_with_dollar)
                     if "Material" in job_order_materials.columns:
                         job_order_materials = job_order_materials["Material"]
                     else:
@@ -80,6 +84,7 @@ def find_materials():
                 if os.path.exists(file_path_prev_without_dollar):
                     try:
                         job_order_materials = pd.read_excel(file_path_prev_without_dollar)
+                        jobOrderDf = pd.read_excel(file_path_prev_without_dollar)
                         if "Material" in job_order_materials.columns:
                             job_order_materials = job_order_materials["Material"]
                         else:
@@ -88,3 +93,31 @@ def find_materials():
                         print(f"Error reading file in previous year without dollar sign: {e}")
                 else:
                     print(f"File not found: {file_path_current_with_dollar}, {file_path_current_without_dollar}, {file_path_prev_with_dollar}, and {file_path_prev_without_dollar}")
+
+# check_job_orders()
+# find_materials()
+
+#EM2P
+# expectedData = jobOrderDf[jobOrderDf['Material Description'].str.lower().str.contains("2p", na=False)]
+# expectedData
+
+# expectedData = jobOrderDf[jobOrderDf['Material Description'].str.lower().str.contains("3p", na=False)]
+# expectedData
+
+# expectedData = jobOrderDf[jobOrderDf['Material Description'].str.lower().str.contains("harness", na=False)]
+# expectedData
+
+# expectedData = jobOrderDf[jobOrderDf['Material Description'].str.lower().str.contains("frame", na=False)]
+# expectedData = expectedData[expectedData['Material'].str.lower().str.contains("fm", na=False)]
+# expectedData
+
+# expectedData = jobOrderDf[jobOrderDf['Material Description'].str.lower().str.contains("bushing", na=False)]
+# expectedData = expectedData["Material"].values
+
+# for a in expectedData:
+#     print(a)
+
+# expectedData = jobOrderDf[jobOrderDf['Material Description'].str.lower().str.contains("vinyl", na=False)]
+# expectedData = expectedData[expectedData['Material'].str.lower().str.contains("csb", na=False)]
+# expectedData = expectedData["Material"].values
+#%%

@@ -151,7 +151,10 @@ def readCompiledPiMachine():
     df = df[(~df["MODEL_CODE"].isin(["60FC00905P"]))]
     df = df[(~df["MODEL_CODE"].isin(["60FCXP001P"]))]
     df = df[(~df["MODEL_CODE"].isin(["30FCXP001P"]))]
+    df = df[(~df["MODEL_CODE"].isin(["60CAT0213T"]))]
+    df = df[(~df["MODEL_CODE"].isin(["60CAT0212T"]))]
     df = df[(~df["PASS_NG"].isin([0]))]
+    df = df[(~df["PASS_NG"].isin(["0"]))]
 
     df['S_N'] = df['S_N'].astype(str)
     df['MODEL_CODE'] = df['MODEL_CODE'].astype(str)
@@ -848,48 +851,184 @@ def CheckMaterial(process, material, code):
             same_value = 0
             if temp_df_vt_1[f"Process_1_{material}"].values[0] == a:
                 same_value += 1
-                WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 1 Correct {material} : {code}")
+                # WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 1 Correct {material} : {code}")
                 print(f"Process 1 Correct {material}")
                 break
         if same_value == 0:
-            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 1 Incorrect {material} : {code}")
+            if material == "Em2p":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("2p", na=False)]
+                expectedData = expectedData["Material"].values
+
+            elif material == "Em3p":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("3p", na=False)]
+                expectedData = expectedData["Material"].values
+
+            elif material == "Harness":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("harness", na=False)]
+                expectedData = expectedData["Material"].values
+
+            elif material == "Frame":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("frame", na=False)]
+                expectedData = expectedData[expectedData['Material'].str.lower().str.contains("fm", na=False)]
+                expectedData = expectedData["Material"].values
+
+            elif material == "Bushing":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("bushing", na=False)]
+                expectedData = expectedData["Material"].values
+
+            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 1 Incorrect {material} : {code} : Expected: {expectedData}")
             isProcess1MaterialWrong = True
             print(f"Process 1 Incorrect {material}")
+        # if same_value == 0:
+        #     if material == "Em2p":
+
+        #     WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 1 Incorrect {material} : {code}")
+        #     isProcess1MaterialWrong = True
+        #     print(f"Process 1 Incorrect {material}")
 
     if process == "2":
         for a in JOManager.job_order_materials:
             same_value = 0
             if temp_df_vt_2[f"Process_2_{material}"].values[0] == a:
                 same_value += 1
-                WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 2 Correct {material} : {code}")
+                # WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 2 Correct {material} : {code}")
                 print(f"Process 2 Correct {material}")
                 break
         if same_value == 0:
-            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 2 Incorrect {material} : {code}")
+            if material == "M4x40_Screw":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Rod_Blk":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("rod", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Df_Blk":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("diaphragm", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Df_Ring":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("df ring", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Washer":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("washer", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Lock_Nut":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("lock nut", na=False)]
+                expectedData = expectedData["Material"].values
+
+
+
+
+
+            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 2 Incorrect {material} : {code} : Expected: {expectedData}")
             isProcess2MaterialWrong = True
             print(f"Process 2 Incorrect {material}")
+
     if process == "3":
         for a in JOManager.job_order_materials:
             same_value = 0
             if temp_df_vt_3[f"Process_3_{material}"].values[0] == a:
                 same_value += 1
-                WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 3 Correct {material} : {code}")
+                # WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 3 Correct {material} : {code}")
                 print(f"Process 3 Correct {material}")
                 break
         if same_value == 0:
-            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 3 Incorrect {material} : {code}")
+            if material == "Frame_Gasket":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("frame gasket", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Casing_Block":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("casing", na=False)]
+                expectedData = expectedData[expectedData['Material'].str.lower().str.contains("csb", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Casing_Gasket":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("casing gasket", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "M4x16_Screw_1":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x16", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "M4x16_Screw_2":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x16", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Ball_Cushion":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("ball cushion", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Partition_Board":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("partition board zam", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Built_In_Tube_1":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("built", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Built_In_Tube_2":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("built", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Frame_Cover":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("frame cover", na=False)]
+                expectedData = expectedData["Material"].values
+            # elif material == "Head_Cover":
+            #     expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+            #     expectedData = expectedData["Material"].values
+            # elif material == "Casing_Packing":
+            #     expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+            #     expectedData = expectedData["Material"].values
+            # elif material == "M4x12_Screw":
+            #     expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+            #     expectedData = expectedData["Material"].values
+            # elif material == "Csb_L":
+            #     expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+            #     expectedData = expectedData["Material"].values
+            # elif material == "Csb_R":
+            #     expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+            #     expectedData = expectedData["Material"].values
+            # elif material == "Head_Packing":
+            #     expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+            #     expectedData = expectedData["Material"].values
+
+
+
+
+            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 3 Incorrect {material} : {code} : Expected: {expectedData}")
             isProcess3MaterialWrong = True
             print(f"Process 3 Incorrect {material}")
+
     if process == "4":
         for a in JOManager.job_order_materials:
             same_value = 0
             if temp_df_vt_4[f"Process_4_{material}"].values[0] == a:
                 same_value += 1
-                WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 4 Correct {material} : {code}")
+                # WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 4 Correct {material} : {code}")
                 print(f"Process 4 Correct {material}")
                 break
         if same_value == 0:
-            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 4 Incorrect {material} : {code}")
+            if material == "Tank":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("tank", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Upper_Housing":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("upper", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Cord_Hook":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("cord", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "M4x16_Screw":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x16", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Tank_Gasket":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("tank gasket", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Tank_Cover":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("tank cover", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "Housing_Gasket":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("housing gasket", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "M4x40_Screw":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x40", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "PartitionGasket":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("partition", na=False)]
+                expectedData = expectedData["Material"].values
+            elif material == "M4x12_Screw":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("m4x12", na=False)]
+                expectedData = expectedData["Material"].values
+
+            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 4 Incorrect {material} : {code} : Expected: {expectedData}")
             isProcess4MaterialWrong = True
             print(f"Process 4 Incorrect {material}")
     if process == "5":
@@ -897,11 +1036,15 @@ def CheckMaterial(process, material, code):
             same_value = 0
             if temp_df_vt_5[f"Process_5_{material}"].values[0] == a:
                 same_value += 1
-                WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 5 Correct {material} : {code}")
+                # WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 5 Correct {material} : {code}")
                 print(f"Process 5 Correct {material}")
                 break
         if same_value == 0:
-            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 5 Incorrect {material} : {code}")
+            if material == "Rating_Label":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("rating", na=False)]
+                expectedData = expectedData["Material"].values
+
+            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 5 Incorrect {material} : {code} : Expected: {expectedData}")
             isProcess5MaterialWrong = True
             print(f"Process 5 Incorrect {material}")
     if process == "6":
@@ -909,11 +1052,15 @@ def CheckMaterial(process, material, code):
             same_value = 0
             if temp_df_vt_6[f"Process_6_{material}"].values[0] == a:
                 same_value += 1
-                WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 6 Correct {material} : {code}")
+                # WrongMaterialDetector.InsertInMaterialLogWindow(1, f"Process 6 Correct {material} : {code}")
                 print(f"Process 6 Correct {material}")
                 break
         if same_value == 0:
-            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 6 Incorrect {material} : {code}")
+            if material == "Vinyl":
+                expectedData = JOManager.jobOrderDf[JOManager.jobOrderDf['Material Description'].str.lower().str.contains("vinyl", na=False)]
+                expectedData = expectedData["Material"].values
+
+            WrongMaterialDetector.InsertInMaterialLogWindow(0, f"Process 6 Incorrect {material} : {code} : Expected: {expectedData}")
             isProcess6MaterialWrong = True
             print(f"Process 6 Incorrect {material}")
 

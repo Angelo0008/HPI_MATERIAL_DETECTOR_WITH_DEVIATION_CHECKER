@@ -478,8 +478,8 @@ def showGUI():
     
 
     # LOG BOX
-    varMan.materialLogWindow = tk.Text(frame1, height=10, width=50, font=("Arial", 14))
-    varMan.materialLogWindow.grid(column=0, row=11, columnspan=2)
+    varMan.materialLogWindow = tk.Text(frame1, height=10, width=80, font=("Arial", 14))
+    varMan.materialLogWindow.grid(column=0, row=11, columnspan=3)
     varMan.materialLogWindow.config(state="disabled")
     varMan.materialLogWindow.tag_configure("red", foreground="red")
 
@@ -492,22 +492,6 @@ def showGUI():
         height=1,
     )
     materialLogWindowClearButton.grid(column=0, row=12, ipadx=5, ipady=5) # Button to stop process 1
-    materialLogWindowClearButton.config(bg="gray", fg="black") # Button color and text
-
-    # LOG BOX
-    varMan.deviation_time_text = tk.Text(frame1, height=10, width=50, font=("Arial", 14))
-    varMan.deviation_time_text.grid(column=2, row=11, columnspan=2)
-    varMan.deviation_time_text.config(state="disabled")
-
-    materialLogWindowClearButton = tk.Button(
-        frame1,
-        text="CLEAR",
-        font=("Arial", 10),
-        command=ClearLogWindow,
-        width=10,
-        height=1,
-    )
-    materialLogWindowClearButton.grid(column=2, row=12, ipadx=5, ipady=5) # Button to stop process 1
     materialLogWindowClearButton.config(bg="gray", fg="black") # Button color and text
 
     nextWindowButton = tk.Button(
